@@ -3,13 +3,17 @@ const Empleados = require('../models/empleado')
 
 
 ctrl.findAllEmpleados = async (req, res) => {
-    await Empleados.find(function (err, empleado) {
-        if (!err) {
-            res.send(empleado);
-        } else {
-            console.log('ERROR: ' + err);
-        }
-    });
+    try {
+        const empleados = await Empleados.find()
+            .sort({'created': -1})
+            .exec();
+        
+        res.status(200).send({empleados})
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
 }
 
 
@@ -28,24 +32,20 @@ ctrl.findById = async (req, res) => {
 
 ctrl.addEmpleado = async (req, res) => {
 
-    var empleado = new Empleados({
+    const empleado = new Empleados({
         nombre: req.body.nombre,
         apellido: req.body.apellido,
-        fechaNacimiento: req.body.fechaNacimiento,
+        fechaNacimiento: new Date(req.body.fechaNacimiento),
         sexo: req.body.sexo,
-        fechaIngreso: req.body.fechaIngreso,
+        fechaIngreso: new Date(req.body.fechaIngreso),
         estrato: req.body.estrato
     });
 
-    await empleado.save(function (err) {
-        if (!err) {
-            console.log('Created');
-        } else {
-            console.log('ERROR: ' + err);
-        }
+    await empleado.save().then((emp) => {
+        res.status(200).send({emp})
+    }).catch((error) => {
+        res.status(500).send({message: 'no pudo registrarse el empleado' + error.message})
     });
-
-    res.send(empleado);
 };
 
 

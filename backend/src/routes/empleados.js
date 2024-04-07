@@ -1,3 +1,4 @@
+
 const empleadoCtrl = require('../controllers/empleadoController')
 
 module.exports = function (app) {
