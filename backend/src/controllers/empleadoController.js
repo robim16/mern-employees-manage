@@ -18,15 +18,18 @@ ctrl.findAllEmpleados = async (req, res) => {
 
 
 ctrl.findById = async (req, res) => {
-    const id = req.params.id
+    const { id } = req.params
 
-    await Empleados.find({_id: id}, function(err, empleado){
-        if (!err) {
-            res.send(empleado)
-        } else {
-            console.log('ERROR: ' + err);
-        }
-    })
+    try {
+        const empleado = await Empleados.find({_id: id});
+        
+        res.status(200).send({empleado})
+
+    } catch (error) {
+        res.status(500).json({
+            message: error.message
+        });
+    }
 }
 
 
@@ -53,47 +56,42 @@ ctrl.addEmpleado = async (req, res) => {
 ctrl.updateEmpleado = async (req, res) => {
     const { id } = req.params
 
-    try {
-        await Empleados.findByIdAndUpdate({_id: id}, {
-            $set: {
-                nombre: req.body.nombre,
-                apellido: req.body.apellido,
-                fechaNacimiento: req.body.fechaNacimiento,
-                sexo: req.body.sexo,
-                fechaIngreso: req.body.fechaIngreso,
-                estrato: req.body.estrato
-            }
-        },
-        {
-            upsert: true
-        }).then(empleadoUpdated => {
+    await Empleados.findByIdAndUpdate({_id: id}, {
+        $set: {
+            nombre: req.body.nombre,
+            apellido: req.body.apellido,
+            fechaNacimiento: req.body.fechaNacimiento,
+            sexo: req.body.sexo,
+            fechaIngreso: req.body.fechaIngreso,
+            estrato: req.body.estrato
+        }
+    },
+    {
+        upsert: true,
+        new: true
+    }).then(empleadoUpdated => {
 
-            return res.json(empleadoUpdated);
+        return res.json(empleadoUpdated);
 
-        }).catch(err => {
+    }).catch(err => {
 
-           return res.status(500).send({message: 'Error al modificar' + err});
-    
-        })
+        return res.status(500).send({message: 'Error al modificar' + err});
 
-    } catch (error) {
-        res.status(500).json({
-            message: err.message
-        });
-    }
+    })
 }
 
 
 ctrl.deleteEmpleado = async (req, res) => {
     const { id } = req.params
 
-    await Empleados.findByIdAndDelete(id, function (err, empleado) { 
-        if (err){ 
-            console.log(err) 
-        } 
-        else{ 
-            console.log("Deleted : ", empleado); 
-        } 
+    await Empleados.findByIdAndDelete({_id: id}).then(empleadoDeleted => {
+
+        return res.json(empleadoDeleted);
+
+    }).catch(err => {
+
+       return res.status(500).send({message: 'Error al eliminar' + err});
+
     }); 
 }
 
