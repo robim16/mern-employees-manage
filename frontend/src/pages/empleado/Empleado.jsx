@@ -1,7 +1,10 @@
-import { useState, useContext, useEffect } from 'react'
-import { useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react'
+import { Link, useLocation } from "react-router-dom";
 import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button'
 import axios from 'axios'
+import Letras from '../../components/letras/Letras'
+import moment from 'moment';
 
 
 const Empleado = () => {
@@ -32,14 +35,16 @@ const Empleado = () => {
 
     const fetchEmpleado = async () => {
 
-      try {
-        const res = await axios.get(`http://localhost:4000/empleado/${id}`)
+      await axios.get(`http://localhost:4000/empleado/${id}`)
+        .then(function (res) {
 
-        SetEmpleado(res.data.empleado)
+          SetEmpleado(res.data.empleado[0])
 
-      } catch (error) {
-        console.log(error)
-      }
+          console.log(res);
+        })
+        .catch(function (error) {
+          console.log(error);
+        })
 
     }
 
@@ -49,9 +54,9 @@ const Empleado = () => {
 
   return (
     <div>
-      <> 
-        { Empleado && (
-          <> 
+      <>
+        {Empleado && (
+          <>
             <br />
 
             <Table striped bordered hover>
@@ -68,17 +73,17 @@ const Empleado = () => {
               </thead>
               <tbody>
                 <>
-                  
-                  <tr key={Empleado[0]._id}>
-                    <td>{Empleado[0].nombre}</td>
-                    <td>{Empleado[0].apellido}</td>
-                    <td>{Empleado[0].fechaNacimiento}</td>
-                    <td>{Empleado[0].sexo}</td>
-                    <td>{Empleado[0].fechaIngreso}</td>
-                    <td>{Empleado[0].estrato}</td>
-                    <td>{getEdad(Empleado[0].fechaNacimiento)}</td>
+
+                  <tr key={Empleado._id}>
+                    <td>{Empleado.nombre}</td>
+                    <td>{Empleado.apellido}</td>
+                    <td>{moment(Empleado.fechaNacimiento).format("YYYY-MM-DD")}</td>
+                    <td>{Empleado.sexo}</td>
+                    <td>{moment(Empleado.fechaIngreso).format("YYYY-MM-DD")}</td>
+                    <td>{Empleado.estrato}</td>
+                    <td>{getEdad(Empleado.fechaNacimiento)}</td>
                   </tr>
-                
+
                 </>
               </tbody>
             </Table>
@@ -86,7 +91,17 @@ const Empleado = () => {
         )}
 
 
-        {/* <Letras nombre={empleado.nombre + empleado.apellido}/>  */}
+        <Letras empleado={Empleado} />
+
+
+        <div className='p-2'>
+          <Link
+            to={`/`}
+          >
+            <Button type='button' variant="warning" >
+              Regresar</Button>
+          </Link>
+        </div>
       </>
     </div>
   )

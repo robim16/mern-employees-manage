@@ -4,14 +4,15 @@ import Table from 'react-bootstrap/Table';
 import { Link } from "react-router-dom";
 import Button from 'react-bootstrap/Button'
 import axios from 'axios'
-import moment from"moment";
+import moment from "moment";
+import Alert from 'react-bootstrap/Alert';
 
 
 
 const Home = () => {
 
   const { empleados, dispatch } = useContext(EmpleadosContext)
-
+  const [show, setShow] = useState(true);
 
   const deleteEmpleado = async (id) => {
     try {
@@ -21,15 +22,16 @@ const Home = () => {
           method: 'DELETE'
         }
       )
+
+      if (res) {
+        setShow(true)
+        fetchEmpleados()
+      }
     } catch (error) {
       console.log(error)
     }
   }
 
-  const formatDate = (date) => {
-    const fecha = moment(date, "MM/DD/YYYY");
-    return fecha
-  }
 
   const getEdad = (fechaNacimiento) => {
     let hoy = new Date()
@@ -46,20 +48,21 @@ const Home = () => {
     return edad
   }
 
-  useEffect(() => {
-    const fetchEmpleados = async () => {
+  const fetchEmpleados = async () => {
 
-      dispatch({ type: "FETCH_EMPLEADOS_START" })
-      try {
-        const res = await axios.get(`http://localhost:4000/empleados`)
+    dispatch({ type: "FETCH_EMPLEADOS_START" })
+    try {
+      const res = await axios.get(`http://localhost:4000/empleados`)
 
-        dispatch({ type: "FETCH_EMPLEADOS_FULFILLED", payload: res.data.empleados });
+      dispatch({ type: "FETCH_EMPLEADOS_FULFILLED", payload: res.data.empleados });
 
-      } catch (error) {
-        dispatch({ type: "FETCH_EMPLEADOS_REJECTED" })
-      }
-
+    } catch (error) {
+      dispatch({ type: "FETCH_EMPLEADOS_REJECTED" })
     }
+
+  }
+
+  useEffect(() => {
 
     fetchEmpleados()
   }, []);
@@ -68,8 +71,27 @@ const Home = () => {
   return (
     <>
       <div>Listado de empleados</div>
+
+      {show && (
+        <Alert variant={"success"} onClose={() => setShow(false)} dismissible>
+          Se ha eliminado el empleado!
+        </Alert>
+      )}
+
       <br />
+
+      <div className="p-2">
+        <Link
+          to={`/new`}
+        >
+          <Button type='button' variant="primary" >
+            Crear</Button>
+        </Link>
+      </div>
+
+     
       {
+        
         empleados && (
           <Table striped bordered hover>
             <thead>
@@ -90,9 +112,9 @@ const Home = () => {
                   <tr key={empleado._id}>
                     <td>{empleado.nombre}</td>
                     <td>{empleado.apellido}</td>
-                    <td>{empleado.fechaNacimiento}</td>
+                    <td>{moment(empleado.fechaNacimiento).format("YYYY-MM-DD")}</td>
                     <td>{empleado.sexo}</td>
-                    <td>{empleado.fechaIngreso}</td>
+                    <td>{moment(empleado.fechaIngreso).format("YYYY-MM-DD")}</td>
                     <td>{empleado.estrato}</td>
                     <td>{getEdad(empleado.fechaNacimiento)}</td>
                     <td>
