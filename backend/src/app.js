@@ -5,7 +5,7 @@ var express  = require("express"),
   cors     = require('cors')
  
 
-const port = 3000
+const port = 4000
 
 require('./database');
 app.set('port', process.env.PORT || port)
@@ -23,5 +23,5 @@ routes = require('./routes/empleados')(app);
 
 
 server.listen(app.get('port'), function() {
-  console.log("Servidor arriba en http://localhost:3000");
+  console.log("Servidor arriba en http://localhost:4000");
 });

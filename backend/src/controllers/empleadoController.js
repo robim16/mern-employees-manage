@@ -8,7 +8,7 @@ ctrl.findAllEmpleados = async (req, res) => {
             .sort({'created': -1})
             .exec();
         
-        res.status(200).send({empleados})
+        res.status(200).json({empleados})
     } catch (error) {
         res.status(500).json({
             message: error.message
@@ -23,7 +23,7 @@ ctrl.findById = async (req, res) => {
     try {
         const empleado = await Empleados.find({_id: id});
         
-        res.status(200).send({empleado})
+        res.status(200).json({empleado})
 
     } catch (error) {
         res.status(500).json({
@@ -45,7 +45,7 @@ ctrl.addEmpleado = async (req, res) => {
     });
 
     await empleado.save().then((emp) => {
-        res.status(200).send({emp})
+        res.status(200).json({emp})
     }).catch((error) => {
         res.status(500).send({message: 'no pudo registrarse el empleado' + error.message})
     });
