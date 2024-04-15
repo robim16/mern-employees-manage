@@ -22,7 +22,7 @@ const NewEmpleado = () => {
     })
 
 
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
 
     const [error, setError] = useState(false);
 

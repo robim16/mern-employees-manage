@@ -17,7 +17,7 @@ const EditEmpleado = () => {
     const id = location.pathname.split("/")[2]
 
 
-    const [show, setShow] = useState(true);
+    const [show, setShow] = useState(false);
 
     const [error, setError] = useState(false);
 
@@ -63,7 +63,7 @@ const EditEmpleado = () => {
 
         if (Empleado.nombre !== undefined && Empleado.apellido !== undefined
             && Empleado.estrato !== undefined && Empleado.fechaIngreso !== undefined
-            && Empleado.fechaNacimiento != undefined && Empleado.sexo != undefined) {
+            && Empleado.fechaNacimiento !== undefined && Empleado.sexo !== undefined) {
 
             fetch(
                 `http://localhost:4000/empleado/${id}`,

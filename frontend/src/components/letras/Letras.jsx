@@ -62,7 +62,7 @@ const Letras = ({empleado}) => {
         }
 
         SetCadena(texto)
-         console.log(Cadena)
+        console.log(Cadena)
         return buscarRepeticiones(Cadena[0])
        
     }
